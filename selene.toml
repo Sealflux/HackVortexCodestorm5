@@ -1,0 +1,3 @@
+[files]
+exclude = ["Packages/_Index/**"]
+std = "roblox"
