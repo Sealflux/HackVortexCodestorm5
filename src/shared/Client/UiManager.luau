@@ -9,11 +9,7 @@ function UiManager.new(Player)
 	self.TweenService = game:GetService("TweenService")
 	self.MeditationFrame = self.MainGui:WaitForChild("MeditationFrame")
 	self.MeditationFrameOxygenBar = self.MeditationFrame:WaitForChild("OxygenBar"):WaitForChild("Fill")
-	self.ToggleTest = self.MeditationFrame:WaitForChild("TextButton")
 	self.MeditationText = self.MeditationFrame:WaitForChild("MeditationText")
-	self.ToggleTest.MouseButton1Click:Connect(function()
-		self:PlayMeditation(4, 4, 5)
-	end)
 
 	return self
 end
@@ -21,6 +17,7 @@ function UiManager:DisplayMeditationText(Text)
 	self.MeditationText.Text = Text
 end
 function UiManager:PlayMeditation(InhaleDuration, ExhaleDuration, HoldDuration)
+	self.MainGui.Enabled = true
 	-- Ensure bars are properly anchored before starting
 	self:SetupBarAnchor()
 
@@ -65,6 +62,7 @@ function UiManager:PlayMeditation(InhaleDuration, ExhaleDuration, HoldDuration)
 	task.wait(HoldDuration / 4)
 
 	self:ResetBar()
+	self.MainGui.Enabled = false
 end
 
 function UiManager:SetupBarAnchor()

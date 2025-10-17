@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- UiInit (LocalScript in StarterGui)
 local Player: Player = game.Players.LocalPlayer
-
+local PlayMedEvent = ReplicatedStorage:FindFirstChild("Remotes"):FindFirstChild("PlayMeditation")
 local UiManager = require(ReplicatedStorage.Shared.Client.UiManager)
 
 -- Function to initialize the UI manager for the current player
@@ -32,4 +32,9 @@ Player.CharacterAdded:Connect(function()
 	task.wait(0.5) -- A short delay is often necessary
 	-- Reinitialize the Manager
 	Manager = InitUiManager()
+end)
+
+PlayMedEvent.OnClientEvent:Connect(function(InhaleDuration, ExhaleDuration, HoldDuration)
+	print("Received PlayMeditation event with durations:", InhaleDuration, ExhaleDuration, HoldDuration)
+	Manager:PlayMeditation(InhaleDuration, ExhaleDuration, HoldDuration)
 end)
