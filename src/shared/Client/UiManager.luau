@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UiManager = {}
 UiManager.__index = UiManager
 
@@ -10,6 +11,8 @@ function UiManager.new(Player)
 	self.MeditationFrame = self.MainGui:WaitForChild("MeditationFrame")
 	self.MeditationFrameOxygenBar = self.MeditationFrame:WaitForChild("OxygenBar"):WaitForChild("Fill")
 	self.MeditationText = self.MeditationFrame:WaitForChild("MeditationText")
+	self.ViewportFrame = self.MainGui:WaitForChild("MeditationFrame"):WaitForChild("ViewportFrame")
+	self.WorldModel = self.ViewportFrame:WaitForChild("WorldModel")
 
 	return self
 end
@@ -20,7 +23,15 @@ function UiManager:PlayMeditation(InhaleDuration, ExhaleDuration, HoldDuration)
 	self.MainGui.Enabled = true
 	-- Ensure bars are properly anchored before starting
 	self:SetupBarAnchor()
-
+	local NPC = ReplicatedStorage:WaitForChild("DialogueNPCS"):FindFirstChild("fluxfluxduck"):Clone()
+	local CamValue = NPC:FindFirstChild("CamValue")
+	local Camera = Instance.new("Camera")
+	Camera.CFrame = CamValue.Value
+	Camera.Parent = self.ViewportFrame
+	self.ViewportFrame.CurrentCamera = Camera
+	Camera.HeadLocked = true
+	NPC.Parent = self.WorldModel
+	AnimateNpc(NPC)
 	local InhaleTweenInfo = TweenInfo.new(InhaleDuration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
 	-- Inhale (Oxygen bar - bottom to top)
 	local Inhale = game:GetService("TweenService"):Create(
@@ -64,7 +75,15 @@ function UiManager:PlayMeditation(InhaleDuration, ExhaleDuration, HoldDuration)
 	self:ResetBar()
 	self.MainGui.Enabled = false
 end
-
+function AnimateNpc(NPC)
+	local hum = NPC:FindFirstChild("Humanoid")
+	local animator = hum:FindFirstChild("Animator")
+	local animation = NPC:FindFirstChild("Animation")
+	local animTrack = animator:LoadAnimation(animation)
+	animTrack.Looped = true
+	animTrack.Priority = Enum.AnimationPriority.Idle
+	animTrack:Play()
+end
 function UiManager:SetupBarAnchor()
 	-- Oxygen bar: anchor bottom, start from bottom (bottom to top)
 	self.MeditationFrameOxygenBar.AnchorPoint = Vector2.new(0, 1)
